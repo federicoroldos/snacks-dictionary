@@ -384,7 +384,7 @@ const App = () => {
         <div>
           <p className="app__eyebrow">{'\uACFC\uC790 \uC0AC\uC804'}</p>
           <h1>Snacks Dictionary</h1>
-          <p className="app__subtitle">Log your favorite snacks</p>
+          <p className="app__subtitle">Log and review snacks, ice creams and drinks you've tried</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
