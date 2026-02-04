@@ -186,18 +186,18 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
         </header>
         <form className="modal__form" onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="name">Korean name</label>
+            <label htmlFor="name">Snack name</label>
             <input
               id="name"
               value={values.name}
               onChange={(event) => handleChange('name', event.target.value)}
-              placeholder="빼빼로"
+              placeholder="Pepero"
               required
               disabled={isSubmitting}
             />
           </div>
           <div className="field">
-            <label htmlFor="nameEnglish">English name</label>
+            <label htmlFor="nameEnglish">English name (optional)</label>
             <input
               id="nameEnglish"
               value={values.nameEnglish}
@@ -298,3 +298,4 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
 };
 
 export default EntryFormModal;
+
