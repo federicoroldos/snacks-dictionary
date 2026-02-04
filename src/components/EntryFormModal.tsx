@@ -186,12 +186,12 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
         </header>
         <form className="modal__form" onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="name">Snack name</label>
+            <label htmlFor="name">Korean name</label>
             <input
               id="name"
               value={values.name}
               onChange={(event) => handleChange('name', event.target.value)}
-              placeholder="Pepero"
+              placeholder={'\uBE7C\uBE7C\uB85C'}
               required
               disabled={isSubmitting}
             />
@@ -227,7 +227,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
               id="description"
               value={values.description}
               onChange={(event) => handleChange('description', event.target.value)}
-              placeholder="Crunchy chocolate sticks. Category ideas: chips, candy, cookies, chocolate, jelly, rice snacks, convenience store, limited edition."
+              placeholder="Crunchy chocolate sticks. Category ideas: Korean convenience store, Orion snacks, yakgwa, chips, candy, cookies, chocolate, jelly, rice snacks, limited edition."
               rows={3}
               disabled={isSubmitting}
             />

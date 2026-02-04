@@ -1,6 +1,6 @@
 # Snacks Dictionary
 
-A snack cataloging and rating app with Google sign-in and Google Drive persistence.
+A snack cataloging app where you can rate and track snacks like Pepero, Honey Butter Chips, Choco Pie, and more.
 
 Live app target: [https://federicoroldos.github.io/snacks-dictionary/](https://federicoroldos.github.io/snacks-dictionary/)
 

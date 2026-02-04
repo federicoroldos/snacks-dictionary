@@ -22,7 +22,7 @@ const DEFAULT_DATA: SnackDataFile = {
 const demoEntries: SnackEntry[] = [
   {
     id: 'demo-1',
-    name: 'Pepero',
+    name: '\uBE7C\uBE7C\uB85C',
     nameEnglish: 'Pepero',
     brand: 'Lotte',
     rating: 4.5,
@@ -32,7 +32,7 @@ const demoEntries: SnackEntry[] = [
   },
   {
     id: 'demo-2',
-    name: 'Turtle Chips',
+    name: '\uAF2C\uBD81\uCE69',
     nameEnglish: 'Turtle Chips',
     brand: 'Orion',
     rating: 4,
@@ -379,9 +379,9 @@ const App = () => {
     <div className="app">
       <header className="app__header">
         <div>
-          <p className="app__eyebrow">Snack Notes and Ratings</p>
+          <p className="app__eyebrow">{'\uACFC\uC790 \uC0AC\uC804'}</p>
           <h1>Snacks Dictionary</h1>
-          <p className="app__subtitle">Catalog your favorite snacks, rate them, and keep notes.</p>
+          <p className="app__subtitle">Catalog your favorite snacks like Pepero, Honey Butter Chips, Choco Pie, and more.</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
@@ -413,7 +413,7 @@ const App = () => {
             </label>
             <input
               id="search"
-              placeholder="Search snacks (e.g., Pepero, Choco Pie, Orion)"
+              placeholder="Search snacks (e.g., Pepero, Turtle Chips, Yakgwa, Orion)"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -423,7 +423,7 @@ const App = () => {
           <label className="sort">
             <span>Sort</span>
             <select value={sortMode} onChange={(event) => setSortMode(event.target.value as typeof sortMode)}>
-              <option value="alpha-ko">Alphabetical (Local name)</option>
+              <option value="alpha-ko">Alphabetical (Hangul)</option>
               <option value="alpha-en">Alphabetical (English)</option>
               <option value="rating">Best rated</option>
             </select>
@@ -434,7 +434,7 @@ const App = () => {
       <section className="status">
         {!isLoggedIn && (
           <p className={`status__message ${authError ? 'status__message--error' : ''}`}>
-            {authError || 'Sign in to add, edit, and sync your snack list (like Pepero, Turtle Chips, and more).'}
+            {authError || 'Sign in to add, edit, and sync your snack list (like Pepero, Honey Butter Chips, and Turtle Chips).'}
           </p>
         )}
         {isLoggedIn && <p className={`status__message status__message--${syncState}`}>{syncMessage || 'Drive sync ready.'}</p>}
@@ -444,7 +444,7 @@ const App = () => {
         {visibleEntries.length === 0 ? (
           <div className="empty-state">
             <p>No snack entries yet.</p>
-            <p>Add your first one (for example: Pepero, Honey Butter Chips, or Choco Pie).</p>
+            <p>Add your first one (for example: Pepero, Honey Butter Chips, Choco Pie, or Yakgwa).</p>
           </div>
         ) : (
           visibleEntries.map((entry) => (
@@ -483,7 +483,7 @@ const App = () => {
       )}
 
       <footer className="app__footer">
-        <span>Copyright 2026 Federico Roldos. All rights reserved.</span>
+        <span>Copyright 2026 Federico Roldós. All rights reserved.</span>
         <div className="app__footer-links">
           <a href={`${legalBaseUrl}privacy.html`}>Privacy Policy</a>
           <a href={`${legalBaseUrl}terms.html`}>Terms of Service</a>
