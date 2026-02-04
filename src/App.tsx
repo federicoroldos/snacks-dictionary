@@ -381,7 +381,7 @@ const App = () => {
         <div>
           <p className="app__eyebrow">{'\uACFC\uC790 \uC0AC\uC804'}</p>
           <h1>Snacks Dictionary</h1>
-          <p className="app__subtitle">Log your favorite snacks like Pepero, Honey Butter Chips, Choco Pie, and more</p>
+          <p className="app__subtitle">Log your favorite snacks like Pepero, Choco Pie, and more</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
@@ -483,7 +483,7 @@ const App = () => {
       )}
 
       <footer className="app__footer">
-        <span>Copyright 2026 Federico Roldós. All rights reserved.</span>
+        <span>© 2026 Federico Roldos. All rights reserved.</span>
         <div className="app__footer-links">
           <a href={`${legalBaseUrl}privacy.html`}>Privacy Policy</a>
           <a href={`${legalBaseUrl}terms.html`}>Terms of Service</a>
