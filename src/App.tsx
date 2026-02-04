@@ -25,7 +25,7 @@ const demoEntries: SnackEntry[] = [
     name: '칠성사이다',
     nameEnglish: 'Chilsung Sider',
     brand: 'Lotte',
-    rating: 0,
+    rating: 5,
     description: 'Classic Korean lemon-lime soda with crisp carbonation and a clean, lightly sweet finish.',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
