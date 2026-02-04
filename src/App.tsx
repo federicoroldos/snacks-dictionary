@@ -434,7 +434,7 @@ const App = () => {
       <section className="status">
         {!isLoggedIn && (
           <p className={`status__message ${authError ? 'status__message--error' : ''}`}>
-            {authError || 'Sign in to add, edit, and sync your snack list (like Pepero, Honey Butter Chips, and Turtle Chips).'}
+            {authError || 'Sign in to add, edit, and sync your snack list.'}
           </p>
         )}
         {isLoggedIn && <p className={`status__message status__message--${syncState}`}>{syncMessage || 'Drive sync ready.'}</p>}
