@@ -11,7 +11,7 @@ Live app target: [https://federicoroldos.github.io/snacks-dictionary/](https://f
 - Google Drive `appDataFolder` sync (JSON file auto-created and updated on every change).
 - CRUD operations: add, edit, delete entries with confirmation.
 - 5-star rating with half-star support.
-- Sorting: alphabetical (local name or English) and best rated.
+- Sorting options (in order): Latest, Best rated, Alphabetical (Hangul), Alphabetical (English).
 - Search by name, brand, or notes.
 
 ## Local Setup
@@ -38,7 +38,49 @@ npm run dev
 
 ## Google OAuth + Drive Setup
 
-Follow `SETUP_GOOGLE_OAUTH.md` for complete instructions to create a new Google Cloud project, configure OAuth consent, set redirect URIs, and wire env vars for this app.
+1. Create a new project in Google Cloud Console and add Firebase to that same project.
+2. In Firebase Console, create a Web App and copy its config values.
+3. In Google Cloud Console, enable:
+   - `Google Drive API`
+   - `Identity Toolkit API` (usually enabled by Firebase Auth)
+4. Configure OAuth consent screen (`APIs & Services` -> `OAuth consent screen`):
+   - User type: `External` (or `Internal` for organization-only use)
+   - Add scopes:
+     - `https://www.googleapis.com/auth/userinfo.email`
+     - `https://www.googleapis.com/auth/userinfo.profile`
+     - `https://www.googleapis.com/auth/drive.appdata`
+     - `https://www.googleapis.com/auth/drive.file`
+   - Add test users while app is in testing mode
+5. Create an OAuth Client ID (`APIs & Services` -> `Credentials` -> `OAuth client ID`) with type `Web application`.
+6. Add authorized JavaScript origins:
+   - `http://localhost:5173`
+   - `https://<your-domain>`
+   - `https://<your-project-id>.firebaseapp.com`
+7. Add authorized redirect URI:
+   - `https://<your-project-id>.firebaseapp.com/__/auth/handler`
+8. In Firebase Console (`Authentication` -> `Sign-in method`), enable `Google` provider.
+9. In Firebase Console (`Authentication` -> `Settings` -> `Authorized domains`), ensure your local and production domains are listed.
+10. Create `.env` from `.env.example` and fill:
+
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=<your-project-id>.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=<your-project-id>
+VITE_FIREBASE_APP_ID=...
+```
+
+11. Run the app and verify Google sign-in plus Drive sync:
+
+```bash
+npm install
+npm run dev
+```
+
+Common issues:
+- `auth/unauthorized-domain`: add the domain in Firebase authorized domains.
+- OAuth popup fails: verify OAuth consent/test user settings and JS origins.
+- Drive `403`: confirm Drive API is enabled and required scopes are approved.
+- Redirect mismatch: verify the `/__/auth/handler` URI exactly matches OAuth settings.
 
 ## Data Storage
 

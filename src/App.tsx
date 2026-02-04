@@ -29,16 +29,6 @@ const demoEntries: SnackEntry[] = [
     description: 'Crunchy chocolate-coated biscuit sticks. Easy convenience-store favorite.',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
-  },
-  {
-    id: 'demo-2',
-    name: '\uAF2C\uBD81\uCE69',
-    nameEnglish: 'Turtle Chips',
-    brand: 'Orion',
-    rating: 4,
-    description: 'Layered airy crunch with sweet corn flavor.',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
   }
 ];
 
@@ -68,11 +58,22 @@ const parseDataFile = (payload: string): SnackDataFile => {
 };
 
 const createId = () => (crypto?.randomUUID ? crypto.randomUUID() : `snack-${Date.now()}`);
+const FALLBACK_CREATED_AT_MS = Date.parse('1970-01-01T00:00:00.000Z');
+
+const getCreatedAtMs = (entry: SnackEntry) => {
+  const parsed = Date.parse(entry.createdAt);
+  return Number.isFinite(parsed) ? parsed : FALLBACK_CREATED_AT_MS;
+};
+
+const compareEntryId = (a: SnackEntry, b: SnackEntry) => {
+  if (a.id === b.id) return 0;
+  return a.id < b.id ? -1 : 1;
+};
 
 const App = () => {
   const { user, accessToken, tokenExpired, clearTokenExpired, loading: authLoading, error: authError, signIn, signOut } = useGoogleAuth();
   const [entries, setEntries] = useState<SnackEntry[]>([]);
-  const [sortMode, setSortMode] = useState<'alpha-en' | 'alpha-ko' | 'rating'>('alpha-ko');
+  const [sortMode, setSortMode] = useState<'latest' | 'rating' | 'alpha-ko' | 'alpha-en'>('latest');
   const [query, setQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<SnackEntry | null>(null);
@@ -104,12 +105,14 @@ const App = () => {
     });
 
     const sorted = [...filtered];
-    if (sortMode === 'rating') {
-      sorted.sort((a, b) => b.rating - a.rating || collatorKo.compare(a.name, b.name));
+    if (sortMode === 'latest') {
+      sorted.sort((a, b) => getCreatedAtMs(b) - getCreatedAtMs(a) || compareEntryId(b, a));
+    } else if (sortMode === 'rating') {
+      sorted.sort((a, b) => b.rating - a.rating || collatorKo.compare(a.name, b.name) || compareEntryId(a, b));
     } else if (sortMode === 'alpha-en') {
-      sorted.sort((a, b) => collatorEn.compare(a.nameEnglish || a.name, b.nameEnglish || b.name));
+      sorted.sort((a, b) => collatorEn.compare(a.nameEnglish || a.name, b.nameEnglish || b.name) || compareEntryId(a, b));
     } else {
-      sorted.sort((a, b) => collatorKo.compare(a.name, b.name));
+      sorted.sort((a, b) => collatorKo.compare(a.name, b.name) || compareEntryId(a, b));
     }
     return sorted;
   }, [entries, isLoggedIn, query, sortMode, collatorEn, collatorKo]);
@@ -381,7 +384,7 @@ const App = () => {
         <div>
           <p className="app__eyebrow">{'\uACFC\uC790 \uC0AC\uC804'}</p>
           <h1>Snacks Dictionary</h1>
-          <p className="app__subtitle">Log your favorite snacks like Pepero, Choco Pie, and more</p>
+          <p className="app__subtitle">Log your favorite snacks</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
@@ -423,9 +426,10 @@ const App = () => {
           <label className="sort">
             <span>Sort</span>
             <select value={sortMode} onChange={(event) => setSortMode(event.target.value as typeof sortMode)}>
+              <option value="latest">Latest</option>
+              <option value="rating">Best rated</option>
               <option value="alpha-ko">Alphabetical (Hangul)</option>
               <option value="alpha-en">Alphabetical (English)</option>
-              <option value="rating">Best rated</option>
             </select>
           </label>
         </div>
@@ -494,4 +498,3 @@ const App = () => {
 };
 
 export default App;
-
