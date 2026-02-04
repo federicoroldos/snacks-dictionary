@@ -21,6 +21,16 @@ const DEFAULT_DATA: SnackDataFile = {
 
 const demoEntries: SnackEntry[] = [
   {
+    id: 'demo-2',
+    name: '칠성사이다',
+    nameEnglish: 'Chilsung Sider',
+    brand: 'Lotte',
+    rating: 0,
+    description: 'Classic Korean lemon-lime soda with crisp carbonation and a clean, lightly sweet finish.',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
     id: 'demo-1',
     name: '\uBE7C\uBE7C\uB85C',
     nameEnglish: 'Pepero',
@@ -384,7 +394,7 @@ const App = () => {
         <div>
           <p className="app__eyebrow">{'\uACFC\uC790 \uC0AC\uC804'}</p>
           <h1>Snacks Dictionary</h1>
-          <p className="app__subtitle">Log and review snacks, ice creams and drinks you've tried</p>
+          <p className="app__subtitle">Log and review snacks, ice creams and drinks you've tried!</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
