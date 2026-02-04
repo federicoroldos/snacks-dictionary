@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import EntryCard from './components/EntryCard';
 import EntryFormModal, { type EntryFormSubmitValues } from './components/EntryFormModal';
 import { useGoogleAuth } from './hooks/useGoogleAuth';
@@ -11,41 +11,49 @@ import {
   uploadToAppData
 } from './utils/googleDriveClient';
 import { sanitizeEntries, sanitizeUrl } from './utils/sanitize';
-import type { RamyeonDataFile, RamyeonEntry } from './types/ramyeon';
+import type { SnackDataFile, SnackEntry } from './types/snacks';
 
-const DEFAULT_DATA: RamyeonDataFile = {
+const DEFAULT_DATA: SnackDataFile = {
   version: 1,
   updatedAt: new Date().toISOString(),
   entries: []
 };
 
-const demoEntries: RamyeonEntry[] = [
+const demoEntries: SnackEntry[] = [
   {
     id: 'demo-1',
-    name: '진라면',
-    nameEnglish: 'Shin Ramyeon',
-    brand: 'Ottogi',
-    formFactor: 'packet',
+    name: '빼빼로',
+    nameEnglish: 'Pepero',
+    brand: 'Lotte',
+    rating: 4.5,
+    description: 'Crunchy chocolate-coated biscuit sticks. Easy convenience-store favorite.',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'demo-2',
+    name: '꼬북칩',
+    nameEnglish: 'Turtle Chips',
+    brand: 'Orion',
     rating: 4,
-    spiciness: 'medium',
-    description: 'Clean beefy broth, gentle spice, and a chewy bite.',
+    description: 'Layered airy crunch with sweet corn flavor.',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }
 ];
 
-const DRIVE_ROOT_FOLDER_NAME = 'Ramyeon Dictionary';
+const DRIVE_ROOT_FOLDER_NAME = 'Korean Snacks Dictionary';
 const DRIVE_IMAGE_FOLDER_NAME = 'images';
 const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
 
 const nowIso = () => new Date().toISOString();
 
-const parseDataFile = (payload: string): RamyeonDataFile => {
+const parseDataFile = (payload: string): SnackDataFile => {
   if (!payload || payload.trim().length === 0) {
     return { ...DEFAULT_DATA, updatedAt: nowIso() };
   }
   try {
-    const parsed = JSON.parse(payload) as RamyeonDataFile;
+    const parsed = JSON.parse(payload) as SnackDataFile;
     if (!parsed || !Array.isArray(parsed.entries)) {
       return { ...DEFAULT_DATA, updatedAt: nowIso() };
     }
@@ -59,24 +67,15 @@ const parseDataFile = (payload: string): RamyeonDataFile => {
   }
 };
 
-const createId = () => (crypto?.randomUUID ? crypto.randomUUID() : `ramyeon-${Date.now()}`);
+const createId = () => (crypto?.randomUUID ? crypto.randomUUID() : `snack-${Date.now()}`);
 
 const App = () => {
-  const {
-    user,
-    accessToken,
-    tokenExpired,
-    clearTokenExpired,
-    loading: authLoading,
-    error: authError,
-    signIn,
-    signOut
-  } = useGoogleAuth();
-  const [entries, setEntries] = useState<RamyeonEntry[]>([]);
+  const { user, accessToken, tokenExpired, clearTokenExpired, loading: authLoading, error: authError, signIn, signOut } = useGoogleAuth();
+  const [entries, setEntries] = useState<SnackEntry[]>([]);
   const [sortMode, setSortMode] = useState<'alpha-en' | 'alpha-ko' | 'rating'>('alpha-ko');
   const [query, setQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingEntry, setEditingEntry] = useState<RamyeonEntry | null>(null);
+  const [editingEntry, setEditingEntry] = useState<SnackEntry | null>(null);
   const [driveFileId, setDriveFileId] = useState('');
   const [syncState, setSyncState] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncMessage, setSyncMessage] = useState('');
@@ -86,8 +85,8 @@ const App = () => {
   const failedDriveImageRef = useRef(new Set<string>());
   const imageFolderIdRef = useRef<string | null>(null);
 
+  const legalBaseUrl = import.meta.env.BASE_URL;
   const isLoggedIn = Boolean(user && accessToken);
-
   const collatorEn = useMemo(() => new Intl.Collator('en', { sensitivity: 'base' }), []);
   const collatorKo = useMemo(() => new Intl.Collator('ko', { sensitivity: 'base' }), []);
 
@@ -99,7 +98,8 @@ const App = () => {
       return (
         entry.name.toLowerCase().includes(q) ||
         entry.nameEnglish?.toLowerCase().includes(q) ||
-        entry.brand.toLowerCase().includes(q)
+        entry.brand.toLowerCase().includes(q) ||
+        entry.description?.toLowerCase().includes(q)
       );
     });
 
@@ -107,16 +107,14 @@ const App = () => {
     if (sortMode === 'rating') {
       sorted.sort((a, b) => b.rating - a.rating || collatorKo.compare(a.name, b.name));
     } else if (sortMode === 'alpha-en') {
-      sorted.sort((a, b) =>
-        collatorEn.compare(a.nameEnglish || a.name, b.nameEnglish || b.name)
-      );
+      sorted.sort((a, b) => collatorEn.compare(a.nameEnglish || a.name, b.nameEnglish || b.name));
     } else {
       sorted.sort((a, b) => collatorKo.compare(a.name, b.name));
     }
     return sorted;
   }, [entries, isLoggedIn, query, sortMode, collatorEn, collatorKo]);
 
-  const resolveEntryImage = (entry: RamyeonEntry) => {
+  const resolveEntryImage = (entry: SnackEntry) => {
     if (entry.imageDriveFileId) {
       const driveSrc = driveImageUrls[entry.imageDriveFileId];
       if (driveSrc) return driveSrc;
@@ -129,7 +127,7 @@ const App = () => {
     setModalOpen(true);
   };
 
-  const openEdit = (entry: RamyeonEntry) => {
+  const openEdit = (entry: SnackEntry) => {
     setEditingEntry(entry);
     setModalOpen(true);
   };
@@ -139,13 +137,13 @@ const App = () => {
     setEditingEntry(null);
   };
 
-  const saveToDrive = async (nextEntries: RamyeonEntry[]) => {
+  const saveToDrive = async (nextEntries: SnackEntry[]) => {
     if (!accessToken || !driveFileId) return;
     setSyncState('saving');
     setSyncMessage('Saving to Google Drive...');
     try {
       const sanitizedEntries = sanitizeEntries(nextEntries);
-      const payload: RamyeonDataFile = {
+      const payload: SnackDataFile = {
         version: 1,
         updatedAt: nowIso(),
         entries: sanitizedEntries
@@ -208,9 +206,7 @@ const App = () => {
       name: values.name,
       nameEnglish: values.nameEnglish,
       brand: values.brand,
-      formFactor: values.formFactor,
       rating: values.rating,
-      spiciness: values.spiciness,
       description: values.description,
       imageUrl: nextImageUrl,
       imageDriveFileId: nextImageDriveFileId,
@@ -219,18 +215,16 @@ const App = () => {
     };
 
     if (editingEntry) {
-      const updatedEntry: RamyeonEntry = {
+      const updatedEntry: SnackEntry = {
         ...editingEntry,
         ...entryPayload,
         updatedAt: nowIso()
       };
-      const nextEntries = sanitizeEntries(
-        entries.map((entry) => (entry.id === editingEntry.id ? updatedEntry : entry))
-      );
+      const nextEntries = sanitizeEntries(entries.map((entry) => (entry.id === editingEntry.id ? updatedEntry : entry)));
       setEntries(nextEntries);
       await saveToDrive(nextEntries);
     } else {
-      const newEntry: RamyeonEntry = {
+      const newEntry: SnackEntry = {
         id: createId(),
         createdAt: nowIso(),
         updatedAt: nowIso(),
@@ -244,21 +238,24 @@ const App = () => {
     closeModal();
   };
 
-  const handleDelete = (entry: RamyeonEntry) => {
+  const handleDelete = (entry: SnackEntry) => {
     if (!window.confirm(`Delete ${entry.name}?`)) return;
     const nextEntries = entries.filter((item) => item.id !== entry.id);
     setEntries(nextEntries);
     void saveToDrive(nextEntries);
   };
 
-  useEffect(() => () => {
-    for (const objectUrl of driveImageCacheRef.current.values()) {
-      URL.revokeObjectURL(objectUrl);
-    }
-    driveImageCacheRef.current.clear();
-    driveImageLoadsRef.current.clear();
-    failedDriveImageRef.current.clear();
-  }, []);
+  useEffect(
+    () => () => {
+      for (const objectUrl of driveImageCacheRef.current.values()) {
+        URL.revokeObjectURL(objectUrl);
+      }
+      driveImageCacheRef.current.clear();
+      driveImageLoadsRef.current.clear();
+      failedDriveImageRef.current.clear();
+    },
+    []
+  );
 
   useEffect(() => {
     if (!accessToken) {
@@ -311,11 +308,7 @@ const App = () => {
   }, [accessToken]);
 
   useEffect(() => {
-    const activeIds = new Set(
-      entries
-        .map((entry) => entry.imageDriveFileId)
-        .filter((fileId): fileId is string => Boolean(fileId))
-    );
+    const activeIds = new Set(entries.map((entry) => entry.imageDriveFileId).filter((fileId): fileId is string => Boolean(fileId)));
 
     let changed = false;
     for (const [fileId, objectUrl] of driveImageCacheRef.current.entries()) {
@@ -337,15 +330,13 @@ const App = () => {
 
     const missingIds = Array.from(
       new Set(
-        entries
-          .map((entry) => entry.imageDriveFileId)
-          .filter((fileId): fileId is string => {
-            if (!fileId) return false;
-            if (driveImageCacheRef.current.has(fileId)) return false;
-            if (driveImageLoadsRef.current.has(fileId)) return false;
-            if (failedDriveImageRef.current.has(fileId)) return false;
-            return true;
-          })
+        entries.map((entry) => entry.imageDriveFileId).filter((fileId): fileId is string => {
+          if (!fileId) return false;
+          if (driveImageCacheRef.current.has(fileId)) return false;
+          if (driveImageLoadsRef.current.has(fileId)) return false;
+          if (failedDriveImageRef.current.has(fileId)) return false;
+          return true;
+        })
       )
     );
 
@@ -388,11 +379,9 @@ const App = () => {
     <div className="app">
       <header className="app__header">
         <div>
-          <p className="app__eyebrow">라면 사전</p>
-          <h1>Ramyeon Dictionary</h1>
-          <p className="app__subtitle">
-            Track and rate the ramyeon you’ve tried
-          </p>
+          <p className="app__eyebrow">한국 과자 사전</p>
+          <h1>Korean Snacks Dictionary</h1>
+          <p className="app__subtitle">Catalog Korean snacks, rate them, and keep notes.</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
@@ -416,7 +405,7 @@ const App = () => {
       <section className="toolbar">
         <div className="toolbar__left">
           <button className="button" onClick={openCreate} disabled={!isLoggedIn}>
-            Add Ramyeon
+            Add snack
           </button>
           <div className="field field--search">
             <label htmlFor="search" className="sr-only">
@@ -424,7 +413,7 @@ const App = () => {
             </label>
             <input
               id="search"
-              placeholder="Search by name or brand"
+              placeholder="Search snacks by name, brand, or notes"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -445,21 +434,17 @@ const App = () => {
       <section className="status">
         {!isLoggedIn && (
           <p className={`status__message ${authError ? 'status__message--error' : ''}`}>
-            {authError || 'Sign in to add, edit, and sync your ramyeon list.'}
+            {authError || 'Sign in to add, edit, and sync your Korean snack list.'}
           </p>
         )}
-        {isLoggedIn && (
-          <p className={`status__message status__message--${syncState}`}>
-            {syncMessage || 'Drive sync ready.'}
-          </p>
-        )}
+        {isLoggedIn && <p className={`status__message status__message--${syncState}`}>{syncMessage || 'Drive sync ready.'}</p>}
       </section>
 
       <main className="list">
         {visibleEntries.length === 0 ? (
           <div className="empty-state">
-            <p>No ramyeon entries yet.</p>
-            <p>Add your first one to start the dictionary.</p>
+            <p>No Korean snack entries yet.</p>
+            <p>Add your first one to start your dictionary.</p>
           </div>
         ) : (
           visibleEntries.map((entry) => (
@@ -475,13 +460,7 @@ const App = () => {
         )}
       </main>
 
-      <EntryFormModal
-        isOpen={modalOpen}
-        initial={editingEntry}
-        initialImageSrc={editingEntry ? resolveEntryImage(editingEntry) : ''}
-        onClose={closeModal}
-        onSave={handleSaveEntry}
-      />
+      <EntryFormModal isOpen={modalOpen} initial={editingEntry} initialImageSrc={editingEntry ? resolveEntryImage(editingEntry) : ''} onClose={closeModal} onSave={handleSaveEntry} />
 
       {tokenExpired && (
         <div className="modal" role="dialog" aria-modal="true" aria-labelledby="session-expired-title">
@@ -496,7 +475,7 @@ const App = () => {
                 Dismiss
               </button>
               <button className="button" onClick={() => window.location.reload()}>
-                Refresh & sign in
+                Refresh and sign in
               </button>
             </div>
           </div>
@@ -506,8 +485,8 @@ const App = () => {
       <footer className="app__footer">
         <span>© 2026 Federico Roldos. All rights reserved.</span>
         <div className="app__footer-links">
-          <a href="/privacy.html">Privacy Policy</a>
-          <a href="/terms.html">Terms of Service</a>
+          <a href={`${legalBaseUrl}privacy.html`}>Privacy Policy</a>
+          <a href={`${legalBaseUrl}terms.html`}>Terms of Service</a>
         </div>
       </footer>
     </div>

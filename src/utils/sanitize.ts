@@ -1,4 +1,4 @@
-import type { FormFactor, RamyeonEntry, SpicinessLevel } from '../types/ramyeon';
+import type { SnackEntry } from '../types/snacks';
 
 const MAX_NAME = 80;
 const MAX_BRAND = 60;
@@ -29,15 +29,6 @@ const sanitizeRating = (value: unknown) => {
   return Math.min(5, Math.max(1, Math.round(numeric * 2) / 2));
 };
 
-const FORM_FACTORS: FormFactor[] = ['packet', 'cup'];
-const SPICINESS: SpicinessLevel[] = ['not-spicy', 'mild', 'medium', 'hot', 'extreme'];
-
-const sanitizeFormFactor = (value: unknown): FormFactor =>
-  FORM_FACTORS.includes(value as FormFactor) ? (value as FormFactor) : 'packet';
-
-const sanitizeSpiciness = (value: unknown): SpicinessLevel =>
-  SPICINESS.includes(value as SpicinessLevel) ? (value as SpicinessLevel) : 'mild';
-
 export const sanitizeUrl = (value: unknown) => {
   if (typeof value !== 'string') return '';
   const trimmed = value.trim();
@@ -51,17 +42,15 @@ export const sanitizeUrl = (value: unknown) => {
   }
 };
 
-export const sanitizeEntry = (value: unknown): RamyeonEntry | null => {
+export const sanitizeEntry = (value: unknown): SnackEntry | null => {
   if (!value || typeof value !== 'object') return null;
-  const entry = value as Partial<RamyeonEntry>;
+  const entry = value as Partial<SnackEntry> & Record<string, unknown>;
   return {
-    id: sanitizeText(entry.id, 80) || `ramyeon-${Date.now()}`,
+    id: sanitizeText(entry.id, 80) || `snack-${Date.now()}`,
     name: sanitizeText(entry.name, MAX_NAME),
     nameEnglish: sanitizeText(entry.nameEnglish, MAX_NAME),
     brand: sanitizeText(entry.brand, MAX_BRAND),
-    formFactor: sanitizeFormFactor(entry.formFactor),
     rating: sanitizeRating(entry.rating),
-    spiciness: sanitizeSpiciness(entry.spiciness),
     description: sanitizeText(entry.description, MAX_DESCRIPTION),
     imageUrl: sanitizeUrl(entry.imageUrl),
     imageDriveFileId: sanitizeText(entry.imageDriveFileId, MAX_DRIVE_FILE_ID),
@@ -73,9 +62,9 @@ export const sanitizeEntry = (value: unknown): RamyeonEntry | null => {
 };
 
 export const sanitizeEntries = (entries: unknown) => {
-  if (!Array.isArray(entries)) return [] as RamyeonEntry[];
+  if (!Array.isArray(entries)) return [] as SnackEntry[];
   const sanitized = entries
     .map((entry) => sanitizeEntry(entry))
-    .filter((entry): entry is RamyeonEntry => Boolean(entry));
+    .filter((entry): entry is SnackEntry => Boolean(entry));
   return sanitized;
 };

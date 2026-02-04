@@ -1,13 +1,12 @@
-﻿import RatingStars from './RatingStars';
-import SpiceMeter from './SpiceMeter';
+import RatingStars from './RatingStars';
 import { sanitizeUrl } from '../utils/sanitize';
-import type { RamyeonEntry } from '../types/ramyeon';
+import type { SnackEntry } from '../types/snacks';
 
 interface Props {
-  entry: RamyeonEntry;
+  entry: SnackEntry;
   driveImageUrl?: string;
-  onEdit: (entry: RamyeonEntry) => void;
-  onDelete: (entry: RamyeonEntry) => void;
+  onEdit: (entry: SnackEntry) => void;
+  onDelete: (entry: SnackEntry) => void;
   canEdit: boolean;
 }
 
@@ -22,7 +21,7 @@ const EntryCard = ({ entry, driveImageUrl, onEdit, onDelete, canEdit }: Props) =
         {imageUrl ? (
           <img src={imageUrl} alt={entry.name} />
         ) : (
-          <span>pic</span>
+          <span>snack</span>
         )}
       </div>
       <div className="entry-card__content">
@@ -31,7 +30,6 @@ const EntryCard = ({ entry, driveImageUrl, onEdit, onDelete, canEdit }: Props) =
             <h3>{displayName}</h3>
             <p className="entry-card__meta">
               <span className="pill pill--brand">{entry.brand}</span>
-              <span className="pill">{entry.formFactor}</span>
             </p>
           </div>
           <div className="entry-card__rating">
@@ -39,10 +37,9 @@ const EntryCard = ({ entry, driveImageUrl, onEdit, onDelete, canEdit }: Props) =
           </div>
         </div>
         <p className="entry-card__description">
-          {entry.description?.trim() || 'No description yet. Add your tasting notes.'}
+          {entry.description?.trim() || 'No notes yet. Add tasting details, texture, or where you found it.'}
         </p>
         <div className="entry-card__footer">
-          <SpiceMeter level={entry.spiciness} />
           <div className="entry-card__actions">
             <button
               type="button"

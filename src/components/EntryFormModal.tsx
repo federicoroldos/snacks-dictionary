@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import RatingStars from './RatingStars';
 import { sanitizeUrl } from '../utils/sanitize';
-import type { FormFactor, RamyeonEntry, SpicinessLevel } from '../types/ramyeon';
+import type { SnackEntry } from '../types/snacks';
 
 interface Props {
   isOpen: boolean;
-  initial?: RamyeonEntry | null;
+  initial?: SnackEntry | null;
   initialImageSrc?: string;
   onClose: () => void;
   onSave: (values: EntryFormSubmitValues) => Promise<void>;
@@ -15,9 +15,7 @@ export interface EntryFormSubmitValues {
   name: string;
   nameEnglish: string;
   brand: string;
-  formFactor: FormFactor;
   rating: number;
-  spiciness: SpicinessLevel;
   description: string;
   imageUrl: string;
   imageFile: File | null;
@@ -28,9 +26,7 @@ const defaultValues = {
   name: '',
   nameEnglish: '',
   brand: '',
-  formFactor: 'packet' as FormFactor,
   rating: 3,
-  spiciness: 'mild' as SpicinessLevel,
   description: '',
   imageUrl: ''
 };
@@ -50,7 +46,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const isEditing = Boolean(initial);
-  const title = isEditing ? 'Edit Ramyeon' : 'Add Ramyeon';
+  const title = isEditing ? 'Edit snack' : 'Add snack';
 
   useEffect(() => {
     if (!isOpen) return;
@@ -58,9 +54,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
       name: initial?.name ?? defaultValues.name,
       nameEnglish: initial?.nameEnglish ?? defaultValues.nameEnglish,
       brand: initial?.brand ?? defaultValues.brand,
-      formFactor: initial?.formFactor ?? defaultValues.formFactor,
       rating: initial?.rating ?? defaultValues.rating,
-      spiciness: initial?.spiciness ?? defaultValues.spiciness,
       description: initial?.description ?? defaultValues.description,
       imageUrl: initial?.imageUrl ?? defaultValues.imageUrl
     });
@@ -74,11 +68,14 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
     }
   }, [isOpen, initial]);
 
-  useEffect(() => () => {
-    if (selectedImagePreviewUrl) {
-      URL.revokeObjectURL(selectedImagePreviewUrl);
-    }
-  }, [selectedImagePreviewUrl]);
+  useEffect(
+    () => () => {
+      if (selectedImagePreviewUrl) {
+        URL.revokeObjectURL(selectedImagePreviewUrl);
+      }
+    },
+    [selectedImagePreviewUrl]
+  );
 
   const canSubmit = useMemo(() => values.name.trim() && values.brand.trim(), [values]);
 
@@ -165,7 +162,8 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
   };
 
   const hasInitialImage = Boolean(initialImageSrc);
-  const previewImageSrc = selectedImagePreviewUrl || sanitizeUrl(values.imageUrl) || (!clearImage ? initialImageSrc || '' : '');
+  const previewImageSrc =
+    selectedImagePreviewUrl || sanitizeUrl(values.imageUrl) || (!clearImage ? initialImageSrc || '' : '');
   const canRemoveImage = Boolean(previewImageSrc || selectedImageFile || values.imageUrl.trim() || hasInitialImage);
 
   if (!isOpen) return null;
@@ -176,7 +174,13 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
       <div className="modal__content" role="dialog" aria-modal="true">
         <header className="modal__header">
           <h2>{title}</h2>
-          <button type="button" className="icon-button" onClick={onClose} disabled={isSubmitting} aria-label="Close modal">
+          <button
+            type="button"
+            className="icon-button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            aria-label="Close modal"
+          >
             x
           </button>
         </header>
@@ -187,7 +191,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
               id="name"
               value={values.name}
               onChange={(event) => handleChange('name', event.target.value)}
-              placeholder="진라면"
+              placeholder="빼빼로"
               required
               disabled={isSubmitting}
             />
@@ -198,7 +202,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
               id="nameEnglish"
               value={values.nameEnglish}
               onChange={(event) => handleChange('nameEnglish', event.target.value)}
-              placeholder="Jin Ramen"
+              placeholder="Pepero"
               disabled={isSubmitting}
             />
           </div>
@@ -208,58 +212,22 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
               id="brand"
               value={values.brand}
               onChange={(event) => handleChange('brand', event.target.value)}
-              placeholder="Ottogi"
+              placeholder="Lotte"
               required
               disabled={isSubmitting}
             />
           </div>
           <div className="field field--inline">
-            <span className="field__label">Form factor</span>
-            <div className="segmented">
-              {(['packet', 'cup'] as FormFactor[]).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  className={`segmented__option ${values.formFactor === option ? 'is-active' : ''}`}
-                  onClick={() => handleChange('formFactor', option)}
-                  disabled={isSubmitting}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="field field--inline">
             <span className="field__label">Rating</span>
-            <RatingStars
-              value={values.rating}
-              onChange={(value) => handleChange('rating', value)}
-              size="lg"
-              ariaLabel="Rating"
-            />
+            <RatingStars value={values.rating} onChange={(value) => handleChange('rating', value)} size="lg" ariaLabel="Rating" />
           </div>
           <div className="field">
-            <label htmlFor="spiciness">Spiciness</label>
-            <select
-              id="spiciness"
-              value={values.spiciness}
-              onChange={(event) => handleChange('spiciness', event.target.value as SpicinessLevel)}
-              disabled={isSubmitting}
-            >
-              <option value="not-spicy">Not spicy</option>
-              <option value="mild">Mild</option>
-              <option value="medium">Medium</option>
-              <option value="hot">Hot</option>
-              <option value="extreme">Extreme</option>
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">Notes</label>
             <textarea
               id="description"
               value={values.description}
               onChange={(event) => handleChange('description', event.target.value)}
-              placeholder="Brothy, slightly sweet, balanced spice..."
+              placeholder="Crunchy chocolate sticks. Category ideas: chips, candy, cookies, chocolate, jelly, rice snacks, convenience store, limited edition."
               rows={3}
               disabled={isSubmitting}
             />
@@ -301,7 +269,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
           {previewImageSrc && (
             <div className="field modal__image-field">
               <div className="entry-card__image modal__image-preview">
-                <img src={previewImageSrc} alt="Selected ramyeon preview" />
+                <img src={previewImageSrc} alt="Selected snack preview" />
               </div>
               <button
                 type="button"
@@ -320,7 +288,7 @@ const EntryFormModal = ({ isOpen, initial, initialImageSrc, onClose, onSave }: P
               Cancel
             </button>
             <button type="submit" className="button" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? 'Saving...' : isEditing ? 'Save changes' : 'Add ramyeon'}
+              {isSubmitting ? 'Saving...' : isEditing ? 'Save changes' : 'Add snack'}
             </button>
           </footer>
         </form>

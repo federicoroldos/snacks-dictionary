@@ -1,18 +1,18 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nunito:wght@400;600;700&display=swap');
 
 :root {
   color-scheme: light;
-  --paper: #f8f3e9;
-  --paper-accent: #efe6d8;
-  --ink: #1f2a2e;
-  --muted: #6a6f73;
-  --accent: #d1553d;
-  --accent-dark: #b4432d;
+  --paper: #f1faf8;
+  --paper-accent: #e0f3ef;
+  --ink: #15353a;
+  --muted: #4f666b;
+  --accent: #1fa79b;
+  --accent-dark: #167f76;
   --star: #f2b735;
-  --star-muted: #b8b8b8;
-  --outline: #22333a;
-  --card: #fffdf8;
-  --success: #2f5d45;
+  --star-muted: #9eb6b2;
+  --outline: #1d4a51;
+  --card: #ffffff;
+  --success: #1d7767;
   font-family: 'Nunito', system-ui, sans-serif;
   background: var(--paper);
   color: var(--ink);
@@ -26,8 +26,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(209, 85, 61, 0.08), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(44, 87, 96, 0.08), transparent 45%),
+    radial-gradient(circle at top left, rgba(31, 167, 155, 0.14), transparent 54%),
+    radial-gradient(circle at 80% 0%, rgba(31, 132, 167, 0.1), transparent 48%),
     var(--paper);
 }
 
@@ -296,7 +296,7 @@ textarea {
 
 .entry-card__footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
@@ -332,68 +332,6 @@ textarea {
   display: block;
 }
 
-.spice {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.spice__label {
-  font-weight: 700;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1.5px solid var(--outline);
-}
-
-.spice__label--mild {
-  background: #f5e7e2;
-}
-
-.spice__label--not-spicy {
-  background: #f6eee9;
-}
-
-.spice__label--medium {
-  background: #f5d7c8;
-}
-
-.spice__label--hot {
-  background: #f2c1ae;
-}
-
-.spice__label--extreme {
-  background: #efaa94;
-}
-
-.spice__meter {
-  display: flex;
-  gap: 6px;
-}
-
-.spice__pepper {
-  width: 18px;
-  height: 24px;
-  background-image: url('/pepper.svg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter: grayscale(1) saturate(0.2);
-  opacity: 0.35;
-  transform: rotate(-12deg);
-}
-
-.spice__pepper::after {
-  content: none;
-}
-
-.spice__pepper--on {
-  filter: none;
-  opacity: 1;
-}
-
 .empty-state {
   border: 2px dashed var(--outline);
   border-radius: 16px;
@@ -414,7 +352,7 @@ textarea {
 .modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(31, 42, 46, 0.4);
+  background: rgba(21, 53, 58, 0.4);
 }
 
 .modal__content {
@@ -511,27 +449,6 @@ textarea {
 
 .field__label {
   font-weight: 700;
-}
-
-.segmented {
-  display: inline-flex;
-  border: 2px solid var(--outline);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.segmented__option {
-  border: none;
-  background: white;
-  padding: 6px 14px;
-  font-weight: 700;
-  cursor: pointer;
-  text-transform: capitalize;
-}
-
-.segmented__option.is-active {
-  background: var(--accent);
-  color: white;
 }
 
 .form-error {

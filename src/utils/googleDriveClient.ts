@@ -1,7 +1,7 @@
 ﻿const UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files';
 const DOWNLOAD_URL = 'https://www.googleapis.com/drive/v3/files';
 const FILES_URL = 'https://www.googleapis.com/drive/v3/files';
-const BACKUP_FILENAME = 'ramyeon-dictionary.json';
+const BACKUP_FILENAME = 'korean-snacks-dictionary.json';
 const APP_DATA_QUERY = `name = '${BACKUP_FILENAME}' and trashed = false and 'appDataFolder' in parents`;
 
 export const ensureAppDataFile = async (token: string, name = BACKUP_FILENAME) => {
@@ -140,7 +140,7 @@ export const ensureFolder = async (token: string, name: string, parentId?: strin
 };
 
 export const uploadFileMultipart = async (token: string, file: File, folderId: string): Promise<DriveFileMetadata> => {
-  const boundary = `ramyeon-${crypto.randomUUID?.() || Date.now()}`;
+  const boundary = `snacks-${crypto.randomUUID?.() || Date.now()}`;
   const metadata = {
     name: file.name,
     mimeType: file.type || 'application/octet-stream',

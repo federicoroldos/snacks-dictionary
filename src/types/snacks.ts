@@ -1,14 +1,9 @@
-﻿export type FormFactor = 'packet' | 'cup';
-export type SpicinessLevel = 'not-spicy' | 'mild' | 'medium' | 'hot' | 'extreme';
-
-export interface RamyeonEntry {
+export interface SnackEntry {
   id: string;
   name: string;
   nameEnglish?: string;
   brand: string;
-  formFactor: FormFactor;
   rating: number;
-  spiciness: SpicinessLevel;
   description?: string;
   imageUrl?: string;
   imageDriveFileId?: string;
@@ -18,8 +13,8 @@ export interface RamyeonEntry {
   updatedAt: string;
 }
 
-export interface RamyeonDataFile {
+export interface SnackDataFile {
   version: number;
   updatedAt: string;
-  entries: RamyeonEntry[];
+  entries: SnackEntry[];
 }

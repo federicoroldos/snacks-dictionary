@@ -17,6 +17,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,13 +35,15 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Validate required secrets
+        run: |
+          test -n "$VITE_FIREBASE_API_KEY" || (echo "Missing VITE_FIREBASE_API_KEY" && exit 1)
+          test -n "$VITE_FIREBASE_AUTH_DOMAIN" || (echo "Missing VITE_FIREBASE_AUTH_DOMAIN" && exit 1)
+          test -n "$VITE_FIREBASE_PROJECT_ID" || (echo "Missing VITE_FIREBASE_PROJECT_ID" && exit 1)
+          test -n "$VITE_FIREBASE_APP_ID" || (echo "Missing VITE_FIREBASE_APP_ID" && exit 1)
+
       - name: Build
         run: npm run build
-        env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

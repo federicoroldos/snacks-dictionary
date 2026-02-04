@@ -1,17 +1,18 @@
-﻿# Ramyeon Dictionary
+# Korean Snacks Dictionary
 
-A personal dictionary for Korean ramyeon noodles with Google sign-in and Google Drive persistence.
-Try it out [here](https://federicoroldos.github.io/ramyeon-dictionary/).
+A personal dictionary for Korean snacks with Google sign-in and Google Drive persistence.
+
+Live app target: [https://federicoroldos.github.io/snacks-dictionary/](https://federicoroldos.github.io/snacks-dictionary/)
 
 ## Features
 
-- Dictionary-style list of ramyeon entries with name, brand, form factor, rating, and spiciness.
-- Google sign-in to uniquely identify each user.
+- Catalog Korean snacks with Korean name, English name, brand, rating, notes, and optional image.
+- Google sign-in to keep each user's data separate.
 - Google Drive `appDataFolder` sync (JSON file auto-created and updated on every change).
 - CRUD operations: add, edit, delete entries with confirmation.
 - 5-star rating with half-star support.
 - Sorting: alphabetical (Korean or English) and best rated.
-- Optional search by name or brand.
+- Search by name, brand, or notes.
 
 ## Local Setup
 
@@ -27,7 +28,7 @@ npm install
 cp .env.example .env
 ```
 
-3. Fill in the Firebase credentials in `.env`.
+3. Fill in your Firebase web app credentials in `.env`.
 
 4. Start the dev server:
 
@@ -35,30 +36,17 @@ cp .env.example .env
 npm run dev
 ```
 
-## Google OAuth + Drive Configuration
+## Google OAuth + Drive Setup
 
-This project follows the same Firebase + Google Drive appDataFolder flow used in the reference project.
-
-1. Create a Firebase project.
-2. Enable **Google** as a Sign-in provider in Firebase Authentication.
-3. In Google Cloud Console for the same project:
-   - Enable the **Google Drive API**.
-   - Configure the OAuth consent screen.
-   - Add the scope `https://www.googleapis.com/auth/drive.appdata`.
-4. Add your local dev domain in Firebase Auth (e.g. `localhost`).
-5. Copy the Firebase web app config values into `.env`:
-   - `VITE_FIREBASE_API_KEY`
-   - `VITE_FIREBASE_AUTH_DOMAIN`
-   - `VITE_FIREBASE_PROJECT_ID`
-   - `VITE_FIREBASE_APP_ID`
+Follow `SETUP_GOOGLE_OAUTH.md` for complete instructions to create a new Google Cloud project, configure OAuth consent, set redirect URIs, and wire env vars for this app.
 
 ## Data Storage
 
-Ramyeon data is stored as a JSON file inside the user's Google Drive `appDataFolder`.
-The file is created automatically on first login and updated on every create, edit, or delete.
+Snack data is stored as JSON in the user's Google Drive `appDataFolder`.
+Uploaded images are stored in the user's Google Drive under `Korean Snacks Dictionary/images`.
 
-## Notes
+## Deployment Notes
 
-- If you refresh and Drive actions stop working, sign out and sign back in to refresh the access token.
-- The app includes a demo entry when signed out to show the layout.
-- For security, image URLs must use `https://` (non-HTTPS URLs are rejected).
+- Vite base path is set to `/snacks-dictionary/` in `vite.config.ts` for GitHub Pages project deployment.
+- Legal pages are at `privacy.html` and `terms.html`.
+- If you use a custom domain, configure your own `CNAME`.
