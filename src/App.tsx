@@ -381,7 +381,7 @@ const App = () => {
         <div>
           <p className="app__eyebrow">{'\uACFC\uC790 \uC0AC\uC804'}</p>
           <h1>Snacks Dictionary</h1>
-          <p className="app__subtitle">Catalog your favorite snacks like Pepero, Honey Butter Chips, Choco Pie, and more.</p>
+          <p className="app__subtitle">Log your favorite snacks like Pepero, Honey Butter Chips, Choco Pie, and more</p>
         </div>
         <div className="auth">
           {isLoggedIn ? (
@@ -413,7 +413,7 @@ const App = () => {
             </label>
             <input
               id="search"
-              placeholder="Search snacks (e.g., Pepero, Turtle Chips, Yakgwa, Orion)"
+              placeholder="Search by name or brand"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
