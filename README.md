@@ -36,6 +36,12 @@ cp .env.example .env
 npm run dev
 ```
 
+## Android
+
+The Android app is built with Capacitor and wraps the existing web app. Google Sign-In is handled natively, and Drive sync uses the same `appDataFolder` JSON + image storage.
+
+See `ANDROID_SETUP.md` for the full Android setup, OAuth configuration, and build commands.
+
 ## Google OAuth + Drive Setup
 
 1. Create a new project in Google Cloud Console and add Firebase to that same project.
@@ -67,6 +73,8 @@ VITE_FIREBASE_API_KEY=...
 VITE_FIREBASE_AUTH_DOMAIN=<your-project-id>.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=<your-project-id>
 VITE_FIREBASE_APP_ID=...
+VITE_GOOGLE_WEB_CLIENT_ID=...apps.googleusercontent.com
+VITE_GOOGLE_ANDROID_CLIENT_ID=...apps.googleusercontent.com
 ```
 
 11. Run the app and verify Google sign-in plus Drive sync:

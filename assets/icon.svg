@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Mint background (from provided image tone) -->
+  <rect x="0" y="0" width="100" height="100" rx="22" ry="22" fill="#E6F4F1" />
+
+  <!-- Icon -->
+  <g transform="translate(17,21.4) scale(1.4)">
+    <defs>
+      <style>
+        /* Main mint teal */
+        .cls-1 { fill: #4DB6AC; }
+
+        /* Darker teal for depth */
+        .cls-2 { fill: #2F8F89; }
+
+        /* Deep desaturated teal-gray accent */
+        .cls-3 { fill: #2E4F4D; }
+      </style>
+    </defs>
+
+    <g id="snack-icon">
+      <path class="cls-1" d="M41.85,19.93H3A19.45,19.45,0,0,1,22.43.47H41.85Z" />
+      <path class="cls-2" d="M41.85,19.93H3A19.45,19.45,0,0,0,22.43,39.39H41.85Z" />
+      <rect class="cls-3" x="20.4" y="0.47" width="4.3" height="38.92" />
+    </g>
+  </g>
+</svg>

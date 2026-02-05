@@ -12,6 +12,23 @@ dist
 dist-ssr
 *.local
 docs
+android/.gradle
+android/.idea
+android/.cxx
+android/build
+android/app/build
+android/app/release
+android/app/debug
+android/app/*.apk
+android/app/*.aab
+android/local.properties
+android/*.iml
+*.keystore
+*.jks
+*.pem
+*.key
+*.cert
+*.crt
 
 # Editor directories and files
 .vscode/*

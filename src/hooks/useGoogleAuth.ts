@@ -1,4 +1,6 @@
 ﻿import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { firebaseApp } from '../firebase';
 import {
   browserLocalPersistence,
@@ -6,6 +8,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   setPersistence,
+  signInWithCredential,
   signInWithPopup,
   signOut
 } from 'firebase/auth';
@@ -135,17 +138,41 @@ export const useGoogleAuth = () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await signInWithPopup(auth, provider);
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      if (credential && credential.accessToken) {
-        setAccessToken(credential.accessToken);
-        setAccessTokenExpiresAt(Date.now() + ACCESS_TOKEN_TTL_MS);
-        persistToken(credential.accessToken);
-        setTokenExpired(false);
+      if (Capacitor.isNativePlatform()) {
+        const androidClientId = import.meta.env.VITE_GOOGLE_ANDROID_CLIENT_ID;
+        const webClientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID;
+        if (!androidClientId || !webClientId) {
+          setError('Missing Android or Web Google client ID. Check VITE_GOOGLE_ANDROID_CLIENT_ID and VITE_GOOGLE_WEB_CLIENT_ID.');
+          return;
+        }
+        const nativeResult = await GoogleAuth.signIn();
+        const accessToken = nativeResult.authentication?.accessToken ?? null;
+        const idToken = nativeResult.authentication?.idToken ?? null;
+        const credential = GoogleAuthProvider.credential(idToken ?? undefined, accessToken ?? undefined);
+        await signInWithCredential(auth, credential);
+        if (accessToken) {
+          setAccessToken(accessToken);
+          setAccessTokenExpiresAt(Date.now() + ACCESS_TOKEN_TTL_MS);
+          persistToken(accessToken);
+          setTokenExpired(false);
+        } else {
+          setAccessToken(null);
+          setAccessTokenExpiresAt(null);
+          persistToken(null);
+        }
       } else {
-        setAccessToken(null);
-        setAccessTokenExpiresAt(null);
-        persistToken(null);
+        const result = await signInWithPopup(auth, provider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        if (credential && credential.accessToken) {
+          setAccessToken(credential.accessToken);
+          setAccessTokenExpiresAt(Date.now() + ACCESS_TOKEN_TTL_MS);
+          persistToken(credential.accessToken);
+          setTokenExpired(false);
+        } else {
+          setAccessToken(null);
+          setAccessTokenExpiresAt(null);
+          persistToken(null);
+        }
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Google sign-in failed.';
@@ -158,6 +185,9 @@ export const useGoogleAuth = () => {
   const signOutUser = async () => {
     setLoading(true);
     try {
+      if (Capacitor.isNativePlatform()) {
+        await GoogleAuth.signOut();
+      }
       await signOut(auth);
       setAccessToken(null);
       setAccessTokenExpiresAt(null);
