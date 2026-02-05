@@ -497,7 +497,7 @@ const App = () => {
       )}
 
       <footer className="app__footer">
-        <span>© 2026 Federico Roldos. All rights reserved.</span>
+        <span>© 2026 Federico Roldós. All rights reserved.</span>
         <div className="app__footer-links">
           <a href={`${legalBaseUrl}privacy.html`}>Privacy Policy</a>
           <a href={`${legalBaseUrl}terms.html`}>Terms of Service</a>
