@@ -17,13 +17,6 @@ Snacks Dictionary and Ramyeon Dictionary were consolidated into a single app tha
 - Drinks
 - Ice cream
 
-If you were using this app before, the new home for ongoing development and improvements is **So Full!**.
-
----
-
-## Legacy links
-
-- Old live target (no longer maintained): https://federicoroldos.github.io/snacks-dictionary/
-- New app: https://sofull.site
+If you were using this app before, the new home for ongoing development and improvements is **배불러! So Full!**.
 
 ---
